@@ -1,0 +1,38 @@
+body, html {
+    background-color: lightgray;
+    min-height: 500px;
+}
+#wrapper {
+    position: relative;
+}
+#title {
+    background-color: rgb(57, 56, 126);
+    color: white;
+    text-align: center;
+    font-size: 40px;
+    border: 2px ridge white;
+    font-family: "Georgia";
+}
+#board {
+    border: 2px solid red;
+}
+#rackwrap {
+/*    border: 2px solid red; */
+}
+#tilerack {
+    margin:0 auto; 
+    border: 2px solid green;
+/*    height: 185px;
+    width: 1000px;
+    background-image: url("../images/Scrabble_Tile_Rack.png"); */
+    background: rgb(65, 65, 65);
+    padding: 20px;
+    text-align: center;
+}
+#testTile1:active, #testTile2:active, #testTile3:active {
+    border: 5px rgb(98, 141, 170) solid;
+}
+#testTile1, #testTile2, #testTile3 {
+    width: 100px;
+    margin: 10px;
+}
