@@ -14,25 +14,38 @@ body, html {
     font-family: "Georgia";
 }
 #board {
-    border: 2px solid red;
+    padding-top: 20px;
+    text-align: center;
 }
-#rackwrap {
-/*    border: 2px solid red; */
+#dialog {
+    text-align: center;
+    font-size: 20px;
+    font-family: georgia;
+    padding: 20px;
 }
 #tilerack {
     margin:0 auto; 
-    border: 2px solid green;
-/*    height: 185px;
-    width: 1000px;
-    background-image: url("../images/Scrabble_Tile_Rack.png"); */
-    background: rgb(65, 65, 65);
-    padding: 20px;
+    background: rgb(57, 56, 126);
+    border: darkgray 5px ridge;
+    padding: 10px;
     text-align: center;
+    min-height: 135px;
+    max-width: 750px;
 }
-#testTile1:active, #testTile2:active, #testTile3:active {
+.tles {
+    width: 80px;
+    margin: 10px;
+}
+.tles:active {
     border: 5px rgb(98, 141, 170) solid;
 }
-#testTile1, #testTile2, #testTile3 {
-    width: 100px;
-    margin: 10px;
+.bTiles {
+    width: 95px;
+    margin: 5px;
+}
+.bTiles:active {
+    border: red solid 2px;
+}
+#togglebtns{
+    text-align: center;
 }

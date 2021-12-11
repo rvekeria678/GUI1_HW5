@@ -13,16 +13,30 @@
         <div class="container-fluid" id="wrapper">
             <div class="row">
                 <div class="col-xs-12 col-md-12" id="title">Scrabble</div>
-                <div class="col-xs-12 col-md-12" id="board">Table Row</div>
+                <div class="col-xs-12 col-md-12" id="board"></div>
+                <div class="col-xs-12 col-md-12" id="dialog">
+                    <div id="score"></div>
+                    <div id="validWord"></div>
+                </div>
+                <div class="col-xs-12 col-md-12" id="togglebtns">
+                    <form>
+                        <button type = "button" class="btn btn-outline-dark pl-4 pr-4 mb-2 mr-1" id = "next-btn">Next Word</button>
+                        <button type = "button" class="btn btn-outline-dark pl-4 pr-4 mb-2" id = "reset-btn">Reset</button>
+                    </form>
+                </div>
                 <div class="col-xs-12 col-md-12" id="rackwrap">
                     <div id="tilerack" class="ui-widget-header">
-                        <img src="images/Scrabble_Tile_R.jpg" id="testTile1" class="ui-widget-content">
-                        <img src="images/Scrabble_Tile_A.jpg" id="testTile2" class="ui-widget-content">
-                        <img src="images/Scrabble_Tile_J.jpg" id="testTile3" class="ui-widget-content">
+                        <img src="images/Scrabble_Tile_R.jpg" id="testTile1" class="tles ui-widget-content">
+                        <img src="images/Scrabble_Tile_T.jpg" id="testTile2" class="tles ui-widget-content">
+                        <img src="images/Scrabble_Tile_J.jpg" id="testTile3" class="tles ui-widget-content">
+                        <img src="images/Scrabble_Tile_S.jpg" id="testTile4" class="tles ui-widget-content">
+                        <img src="images/Scrabble_Tile_W.jpg" id="testTile5" class="tles ui-widget-content">
+                        <img src="images/Scrabble_Tile_J.jpg" id="testTile6" class="tles ui-widget-content">
                     </div>
                 </div>
             </div>
         </div>
+        <script src="./js/board.js"></script>
         <script src="./js/hw5.js"></script>
     </body>
 </html>
