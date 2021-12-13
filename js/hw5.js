@@ -80,8 +80,13 @@ $(document).ready(function(){
     }
 
     function drawTiles() {
-        for (let playableTiles = $(".tles").length; playableTiles < 7; ++playableTiles) {
-            generateTile();
+        if (!moreTiles()) {
+            alert("You have finished the Game!");
+            resetGame();
+        } else {
+            for (let playableTiles = $(".tles").length; playableTiles < 7; ++playableTiles) {
+                generateTile();
+            }
         }
     }
 
@@ -95,11 +100,7 @@ $(document).ready(function(){
         return remainingTiles;
     }
 
-    $("#next-btn").click(function() {
-        drawTiles();
-    });
-
-    $("#reset-btn").click(function() {
+    function resetGame() {
         let keys = Object.keys(ScrabbleTiles);
 
         // Removes any remaining tiles left on the board
@@ -109,5 +110,13 @@ $(document).ready(function(){
         for (let i = 0; i < Object.keys(ScrabbleTiles).length; ++i) {
             ScrabbleTiles[keys[i]].nr = ScrabbleTiles[keys[i]].od;
         }
+    }
+
+    $("#next-btn").click(function() {
+        drawTiles();
+    });
+
+    $("#reset-btn").click(function() {
+        resetGame();
     });
 });

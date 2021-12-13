@@ -16,7 +16,7 @@ $(document).ready(function(){
     $(".bTiles").droppable({
         drop: function(event,ui) {
             score += 1;
-            $("#score").html("Score = " + score);
+            $("#score").html("Score : " + score);
             // Reference: https://stackoverflow.com/questions/26746823/jquery-ui-drag-and-drop-snap-to-center
             var $this = $(this);
             ui.draggable.position({
