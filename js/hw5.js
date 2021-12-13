@@ -63,20 +63,18 @@ $(document).ready(function(){
         else if (rx > 94 && rx <= 95) {return "X"; } // od: 1
         else if (rx > 95 && rx <= 97) {return "Y"; } // od: 2
         else if (rx > 97 && rx <= 98) {return "Z"; } // od: 1
-        else if (rx > 98 && rx <= 100) {return "Blank"; } // od: 2
-
+        else if (rx > 98 && rx <= 100) {return "_"; } // od: 2
+        else { return "Blank"; }
     }
 
     // Generates tile to be placed on tile rack
     function generateTile() {
         let tileLetter = generateRandomLetter();
-        while (ScrabbleTiles[tileLetter].nr <= 0) {
-            tileLetter = generateRandomLetter();
-        }
-        console.log("Tile Letter : " + tileLetter);
+        while (ScrabbleTiles[tileLetter].nr <= 0) { tileLetter = generateRandomLetter(); }
+        --ScrabbleTiles[tileLetter].nr;
+        if (tileLetter == "_") { tileLetter = "Blank" }
         $("#tilerack").prepend("<img src='./images/Scrabble_Tile_"+tileLetter+".jpg' id='"+tileLetter+"' class='tles ui-widget-content'></img>");
         $(".tles").draggable({revert:'invalid'});
-        --ScrabbleTiles[tileLetter].nr;
     }
 
     function drawTiles() {
@@ -85,6 +83,7 @@ $(document).ready(function(){
             resetGame();
         } else {
             for (let playableTiles = $(".tles").length; playableTiles < 7; ++playableTiles) {
+                console.log("playableTiles:" + playableTiles);
                 generateTile();
             }
         }
@@ -92,6 +91,7 @@ $(document).ready(function(){
 
     // Determines if there still exists tiles to be dispensed
     function moreTiles() {
+        //console.log("moreTiles() Error");
         var remainingTiles = 0;
         let keys = Object.keys(ScrabbleTiles);
         for (let i = 0; i < Object.keys(ScrabbleTiles).length; ++i) {
@@ -101,6 +101,7 @@ $(document).ready(function(){
     }
 
     function resetGame() {
+        //console.log("resetGame() Error");
         let keys = Object.keys(ScrabbleTiles);
 
         // Removes any remaining tiles left on the board
@@ -110,6 +111,8 @@ $(document).ready(function(){
         for (let i = 0; i < Object.keys(ScrabbleTiles).length; ++i) {
             ScrabbleTiles[keys[i]].nr = ScrabbleTiles[keys[i]].od;
         }
+
+        $("#score").html("Score: --");
     }
 
     $("#next-btn").click(function() {
@@ -118,5 +121,6 @@ $(document).ready(function(){
 
     $("#reset-btn").click(function() {
         resetGame();
+        drawTiles();
     });
 });

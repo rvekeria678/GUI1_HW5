@@ -27,6 +27,6 @@ $(document).ready(function(){
                     $(this).animate(pos, 200, "linear");
                 }
             });
-        } 
+        }
     });
 });
