@@ -1,10 +1,8 @@
-$(document).ready(function(){
-    $("#tilerack").droppable({
-        drop: function(event,ui) {
-            $("#tilerack").css("darkgray 5px ridge");
-        }
-    });
+$(document).ready(function() {
     
+    var totalScore = 0;
+    var score = 0;
+
     var ScrabbleTiles = [] ;
     ScrabbleTiles["A"] = { "value" : 1,  "od" : 9,  "nr" : 9, "timg" : "images/Scrabble_Tile_A.png" } ;
     ScrabbleTiles["B"] = { "value" : 3,  "od" : 2,  "nr" : 2, "timg" : "images/Scrabble_Tile_B.jpg" } ;
@@ -33,7 +31,81 @@ $(document).ready(function(){
     ScrabbleTiles["Y"] = { "value" : 4,  "od" : 2,  "nr" : 2, "timg" : "images/Scrabble_Tile_Y.jpg" } ;
     ScrabbleTiles["Z"] = { "value" : 10, "od" : 1,  "nr" : 1, "timg" : "images/Scrabble_Tile_Z.jpg" } ;
     ScrabbleTiles["_"] = { "value" : 0,  "od" : 2,  "nr" : 2, "timg" : "images/Scrabble_Tile_Blank.jpg" } ;
+
+    var board = [];
+    board[0] = {"bonus":1, "boardImage":"images/Scrabble_Board_Blank.png"};
+    board[1] = {"bonus":1, "boardImage":"images/Scrabble_Board_Blank.png"};
+    board[2] = {"bonus":2, "boardImage":"images/Scrabble_Board_Bonus.png"};
+    board[3] = {"bonus":1, "boardImage":"images/Scrabble_Board_Blank.png"};
+    board[4] = {"bonus":1, "boardImage":"images/Scrabble_Board_Blank.png"};
+    board[5] = {"bonus":2, "boardImage":"images/Scrabble_Board_Bonus.png"};
+    board[6] = {"bonus":1, "boardImage":"images/Scrabble_Board_Blank.png"};
     
+    for (var i = 0; i < board.length; ++i) {
+        $("#board").append("<img src="+board[i].boardImage+" id = b"+ i +" class='bTiles ui-widget-content'>");
+    }
+
+    $(".bTiles").droppable({
+        drop: function(event,ui) {
+            //score += 1;
+            //$("#score").html("Score : " + score);
+            // Reference: https://stackoverflow.com/questions/26746823/jquery-ui-drag-and-drop-snap-to-center
+            var $this = $(this);
+            ui.draggable.position({
+                my: "center",
+                at: "center",
+                of: $this,
+                using: function(pos){
+                    $(this).animate(pos, 200, "linear");
+                }
+            });
+            $(ui.draggable).toggleClass("onBoard", 1);
+
+            let bval = 0;
+            switch ($(this).attr("id")) {
+                case "b0": 
+                    bval = 0;
+                    break;
+                case "b1":
+                    bval = 1;
+                    break;
+                case "b2":
+                    bval = 2;
+                    break;
+                case "b3":
+                    bval = 3;
+                    break;
+                case "b4":
+                    bval = 4;
+                    break;
+                case "b5":
+                    bval = 5;
+                    break;
+                case "b6":   
+                    bval = 6;
+                    break
+                default:
+                    bval = 0;                    
+            }
+            let tltr = $(ui.draggable).attr('id');
+            if (tltr == "Blank") tltr = "_";
+            
+            score += ScrabbleTiles[tltr].value * board[bval].bonus;
+            $("#score").html("Score: " + score);
+            //console.log("Tile " + $(ui.draggable).attr('id') + " dropped on " + $(this).attr('id'));
+        }
+    });
+
+    $("#tilerack").droppable({
+        drop: function(event,ui) {
+            $("#tilerack").css("darkgray 5px ridge");
+            $(ui.draggable).toggleClass("onBoard", 0);
+        }
+    });
+
+    drawTiles();
+    $("#tilesleft").html("Tiles Left: " + moreTiles());
+
     // Generates random letter based off tile disctribution
     function generateRandomLetter() {
         rx = Math.floor((Math.random() * 100) + 1);
@@ -71,8 +143,8 @@ $(document).ready(function(){
     function generateTile() {
         let tileLetter = generateRandomLetter();
         while (ScrabbleTiles[tileLetter].nr <= 0) { tileLetter = generateRandomLetter(); }
-        --ScrabbleTiles[tileLetter].nr;
         if (tileLetter == "_") { tileLetter = "Blank" }
+        ScrabbleTiles[tileLetter].nr -= 1;
         $("#tilerack").prepend("<img src='./images/Scrabble_Tile_"+tileLetter+".jpg' id='"+tileLetter+"' class='tles ui-widget-content'></img>");
         $(".tles").draggable({revert:'invalid'});
     }
@@ -83,7 +155,7 @@ $(document).ready(function(){
             resetGame();
         } else {
             for (let playableTiles = $(".tles").length; playableTiles < 7; ++playableTiles) {
-                console.log("playableTiles:" + playableTiles);
+                //console.log("playableTiles:" + playableTiles);
                 generateTile();
             }
         }
@@ -111,16 +183,28 @@ $(document).ready(function(){
         for (let i = 0; i < Object.keys(ScrabbleTiles).length; ++i) {
             ScrabbleTiles[keys[i]].nr = ScrabbleTiles[keys[i]].od;
         }
-
+        // Resetting Score and ui elements
+        score = 0;
+        $("#totalscore").html("Total Score: --");
         $("#score").html("Score: --");
     }
 
     $("#next-btn").click(function() {
-        drawTiles();
+        if ($(".onBoard").length) { 
+            $(".onBoard").remove();
+            totalScore += score;
+            score = 0;
+            $("#score").html("Score: " + score);
+            $("#totalscore").html("Total Score: " + totalScore);
+            drawTiles();
+            $("#tilesleft").html("Tiles Left: " + moreTiles());
+        }
+
     });
 
     $("#reset-btn").click(function() {
         resetGame();
         drawTiles();
+        $("#tilesleft").html("Tiles Left: " + moreTiles());
     });
 });

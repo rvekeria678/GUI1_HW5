@@ -24,7 +24,8 @@ body, html {
     padding: 20px;
 }
 #tilerack {
-    margin:0 auto; 
+    margin:0 auto;
+    margin-bottom: 20px; 
     background: rgb(57, 56, 126);
     border: darkgray 5px ridge;
     padding: 10px;
