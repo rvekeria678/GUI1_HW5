@@ -1,7 +1,6 @@
 $(document).ready(function() {
     
     var totalScore = 0;
-    var score = 0;
 
     var ScrabbleTiles = [] ;
     ScrabbleTiles["A"] = { "value" : 1,  "od" : 9,  "nr" : 9, "timg" : "images/Scrabble_Tile_A.png" } ;
@@ -42,7 +41,7 @@ $(document).ready(function() {
     board[6] = {"bonus":1, "boardImage":"images/Scrabble_Board_Blank.png"};
     
     for (var i = 0; i < board.length; ++i) {
-        $("#board").append("<img src="+board[i].boardImage+" id = b"+ i +" class='bTiles ui-widget-content'>");
+        $("#board").append("<img src="+board[i].boardImage+" id = b"+ i +" class='bTiles ui-widget-content snapZone'>");
     }
 
     $(".bTiles").droppable({
@@ -51,84 +50,30 @@ $(document).ready(function() {
             //$("#score").html("Score : " + score);
             // Reference: https://stackoverflow.com/questions/26746823/jquery-ui-drag-and-drop-snap-to-center
             var $this = $(this);
-            ui.draggable.position({
+        /*    ui.draggable.position({
                 my: "center",
                 at: "center",
                 of: $this,
                 using: function(pos){
                     $(this).animate(pos, 200, "linear");
                 }
-            });
-            $(ui.draggable).toggleClass("onBoard", 1);
-
-            let bval = 0;
-            switch ($(this).attr("id")) {
-                case "b0": 
-                    bval = 0;
-                    break;
-                case "b1":
-                    bval = 1;
-                    break;
-                case "b2":
-                    bval = 2;
-                    break;
-                case "b3":
-                    bval = 3;
-                    break;
-                case "b4":
-                    bval = 4;
-                    break;
-                case "b5":
-                    bval = 5;
-                    break;
-                case "b6":   
-                    bval = 6;
-                    break
-                default:
-                    bval = 0;                    
-            }
-            let tltr = $(ui.draggable).attr('id');
-            score += ScrabbleTiles[tltr].value * board[bval].bonus;
-            $("#score").html("Score: " + score);
+            }); */
+            $(ui.draggable).addClass("onBoard");
             //console.log("Tile " + $(ui.draggable).attr('id') + " dropped on " + $(this).attr('id'));
-        },
-        out: function (event, ui) {
-            let bval = 0;
-            switch ($(this).attr("id")) {
-                case "b0": 
-                    bval = 0;
-                    break;
-                case "b1":
-                    bval = 1;
-                    break;
-                case "b2":
-                    bval = 2;
-                    break;
-                case "b3":
-                    bval = 3;
-                    break;
-                case "b4":
-                    bval = 4;
-                    break;
-                case "b5":
-                    bval = 5;
-                    break;
-                case "b6":   
-                    bval = 6;
-                    break
-                default:
-                    bval = 0;                    
-            }
-            let tltr = $(ui.draggable).attr('id');            
-            score -= ScrabbleTiles[tltr].value * board[bval].bonus;
-            $("#score").html("Score: " + score);
+            
+            if ($(this).attr('id') == 'b2' || $(this).attr('id') == 'b5') { $(ui.draggable).addClass("bonus", 0); }
+            else $(ui.draggable).removeClass("bonus");
+
+            $("#score").html("Rolling Score: " + getScore());
         }
     });
 
     $("#tilerack").droppable({
         drop: function(event,ui) {
             $("#tilerack").css("darkgray 5px ridge");
-            $(ui.draggable).toggleClass("onBoard", 0);
+            $(ui.draggable).removeClass("onBoard");
+            $(ui.draggable).removeClass("bonus");
+            $("#score").html("Rolling Score: " + getScore());
         }
     });
 
@@ -174,7 +119,7 @@ $(document).ready(function() {
         while (ScrabbleTiles[tileLetter].nr <= 0) { tileLetter = generateRandomLetter(); }
         ScrabbleTiles[tileLetter].nr -= 1;
         $("#tilerack").prepend("<img src='./images/Scrabble_Tile_"+tileLetter+".jpg' id='"+tileLetter+"' class='tles ui-widget-content'></img>");
-        $(".tles").draggable({revert:'invalid'});
+        $(".tles").draggable({revert:'invalid', snap: ".snapZone", snapMode: "inner" });
     }
 
     function drawTiles() {
@@ -200,6 +145,30 @@ $(document).ready(function() {
         return remainingTiles;
     }
 
+    // Determines the score based upon the tiles placed on the board
+    function getScore() {
+        if ($(".onBoard").length >= 2) {
+            let scr = 0;
+            let boardTiles = document.getElementsByClassName('onBoard');
+
+            var tileltr;
+            for (var i = 0; i < boardTiles.length; ++i) {
+                tileltr = boardTiles[i].id;
+                scr += ScrabbleTiles[tileltr].value;
+            }
+
+            switch ($(".bonus").length) {
+                case 1:
+                    return scr * 2;
+                case 2:
+                    return scr * 4;
+                default:
+                    return scr;
+            }
+        }
+        return 0;
+    }
+
     function resetGame() {
         //console.log("resetGame() Error");
         let keys = Object.keys(ScrabbleTiles);
@@ -211,18 +180,20 @@ $(document).ready(function() {
         for (let i = 0; i < Object.keys(ScrabbleTiles).length; ++i) {
             ScrabbleTiles[keys[i]].nr = ScrabbleTiles[keys[i]].od;
         }
-        // Resetting Score and ui elements
-        score = 0;
+        // Resetting ui elements
         $("#totalscore").html("Total Score: --");
-        $("#score").html("Score: --");
+        $("#score").html("Rolling Score: 0");
+        totalScore = 0;
+        //$("#score").html("Score: --");
     }
 
     $("#next-btn").click(function() {
-        if ($(".onBoard").length >= 2) { 
+        if ($(".onBoard").length >= 2) {
+            
+            totalScore += getScore();
+
             $(".onBoard").remove();
-            totalScore += score;
-            score = 0;
-            $("#score").html("Score: " + score);
+            //$("#score").html("Score: " + score);
             $("#totalscore").html("Total Score: " + totalScore);
             drawTiles();
             if (moreTiles() <= 7) {
@@ -231,13 +202,28 @@ $(document).ready(function() {
                 drawTiles();
             }
             $("#tilesleft").html("Tiles Left: " + moreTiles());
-        }
 
+            $("#score").html("Rolling Score: 0");
+        }
     });
 
     $("#reset-btn").click(function() {
         resetGame();
         drawTiles();
         $("#tilesleft").html("Tiles Left: " + moreTiles());
+    });
+
+    $("#new-btn").click(function() {
+        if (moreTiles() <= 7) {
+            alert("You finished the game with a total score of " + totalScore);
+            resetGame();
+            drawTiles();
+            $("#tilesleft").html("Tiles Left: " + moreTiles());
+        }
+        else {
+            if ($(".tles").length) { $(".tles").remove(); }
+            drawTiles();
+            $("#tilesleft").html("Tiles Left: " + moreTiles());
+        }
     });
 });

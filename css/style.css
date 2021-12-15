@@ -41,7 +41,7 @@ body, html {
     border: 5px rgb(98, 141, 170) solid;
 }
 .bTiles {
-    width: 95px;
+    width: 80px;
     margin: 5px;
 }
 .bTiles:active {
