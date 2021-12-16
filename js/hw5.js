@@ -1,3 +1,11 @@
+/*
+File: hw5.js
+GUI Assignment: Scrabble Game
+Raj Vekeria, UMass Lowell Computer Science, rvekeria@cs.uml.edu
+Copyright (c) 2021 by Raj. All rights reserved. May be freely copied or
+excerpted for educational purposes with credit to the author.
+updated by RV on December 15, 2021 at 2:52 PM
+*/
 $(document).ready(function() {
     
     var totalScore = 0;
@@ -34,32 +42,21 @@ $(document).ready(function() {
     var board = [];
     board[0] = {"bonus":1, "boardImage":"images/Scrabble_Board_Blank.png"};
     board[1] = {"bonus":1, "boardImage":"images/Scrabble_Board_Blank.png"};
-    board[2] = {"bonus":2, "boardImage":"images/Scrabble_Board_Bonus.png"};
+    board[2] = {"bonus":2, "boardImage":"images/Scrabble_Board_Bonus.png"}; // Bonus Square
     board[3] = {"bonus":1, "boardImage":"images/Scrabble_Board_Blank.png"};
     board[4] = {"bonus":1, "boardImage":"images/Scrabble_Board_Blank.png"};
-    board[5] = {"bonus":2, "boardImage":"images/Scrabble_Board_Bonus.png"};
+    board[5] = {"bonus":2, "boardImage":"images/Scrabble_Board_Bonus.png"}; // Bonus Square
     board[6] = {"bonus":1, "boardImage":"images/Scrabble_Board_Blank.png"};
     
     for (var i = 0; i < board.length; ++i) {
         $("#board").append("<img src="+board[i].boardImage+" id = b"+ i +" class='bTiles ui-widget-content snapZone'>");
     }
-
+    // Reference: https://jqueryui.com/droppable/
     $(".bTiles").droppable({
         drop: function(event,ui) {
-            //score += 1;
-            //$("#score").html("Score : " + score);
-            // Reference: https://stackoverflow.com/questions/26746823/jquery-ui-drag-and-drop-snap-to-center
-            var $this = $(this);
-        /*    ui.draggable.position({
-                my: "center",
-                at: "center",
-                of: $this,
-                using: function(pos){
-                    $(this).animate(pos, 200, "linear");
-                }
-            }); */
             $(ui.draggable).addClass("onBoard");
-            //console.log("Tile " + $(ui.draggable).attr('id') + " dropped on " + $(this).attr('id'));
+            // // Testing: used to see what tile is dropped on a specific part of the board
+            // console.log("Tile " + $(ui.draggable).attr('id') + " dropped on " + $(this).attr('id'));
             
             if ($(this).attr('id') == 'b2' || $(this).attr('id') == 'b5') { $(ui.draggable).addClass("bonus", 0); }
             else $(ui.draggable).removeClass("bonus");
@@ -67,7 +64,7 @@ $(document).ready(function() {
             $("#score").html("Rolling Score: " + getScore());
         }
     });
-
+    // Reference: https://jqueryui.com/droppable/
     $("#tilerack").droppable({
         drop: function(event,ui) {
             $("#tilerack").css("darkgray 5px ridge");
@@ -77,10 +74,11 @@ $(document).ready(function() {
         }
     });
 
+    // Draws the initial tiles when page is first loaded up
     drawTiles();
     $("#tilesleft").html("Tiles Left: " + moreTiles());
 
-    // Generates random letter based off tile disctribution
+    // Generates random letter based off weighted tile disctribution
     function generateRandomLetter() {
         rx = Math.floor((Math.random() * 100) + 1);
         if (rx > 0 && rx <= 9) { return "A"; } // od: 9
@@ -119,16 +117,19 @@ $(document).ready(function() {
         while (ScrabbleTiles[tileLetter].nr <= 0) { tileLetter = generateRandomLetter(); }
         ScrabbleTiles[tileLetter].nr -= 1;
         $("#tilerack").prepend("<img src='./images/Scrabble_Tile_"+tileLetter+".jpg' id='"+tileLetter+"' class='tles ui-widget-content'></img>");
+        // Reference: https://api.jqueryui.com/draggable/#option-snap
+        // Reference: https://jqueryui.com/draggable/
         $(".tles").draggable({revert:'invalid', snap: ".snapZone", snapMode: "inner" });
     }
-
+    // Responsible for drawing tiles after each new round or next word
     function drawTiles() {
+        // If there exists no more tiles, show end game message and reset the game
         if (!moreTiles()) {
             alert("You have finished the Game!");
             resetGame();
         } else {
+            // Draws up to seven tiles
             for (let playableTiles = $(".tles").length; playableTiles < 7; ++playableTiles) {
-                //console.log("playableTiles:" + playableTiles);
                 generateTile();
             }
         }
@@ -136,7 +137,6 @@ $(document).ready(function() {
 
     // Determines if there still exists tiles to be dispensed
     function moreTiles() {
-        //console.log("moreTiles() Error");
         var remainingTiles = 0;
         let keys = Object.keys(ScrabbleTiles);
         for (let i = 0; i < Object.keys(ScrabbleTiles).length; ++i) {
@@ -168,9 +168,8 @@ $(document).ready(function() {
         }
         return 0;
     }
-
+    // Resets Game through by returning global variable and ui elements to their intial states
     function resetGame() {
-        //console.log("resetGame() Error");
         let keys = Object.keys(ScrabbleTiles);
 
         // Removes any remaining tiles left on the board
@@ -184,16 +183,14 @@ $(document).ready(function() {
         $("#totalscore").html("Total Score: --");
         $("#score").html("Rolling Score: 0");
         totalScore = 0;
-        //$("#score").html("Score: --");
     }
-
+    // Handles Next Button Actions
     $("#next-btn").click(function() {
         if ($(".onBoard").length >= 2) {
             
             totalScore += getScore();
 
             $(".onBoard").remove();
-            //$("#score").html("Score: " + score);
             $("#totalscore").html("Total Score: " + totalScore);
             drawTiles();
             if (moreTiles() <= 7) {
@@ -206,13 +203,13 @@ $(document).ready(function() {
             $("#score").html("Rolling Score: 0");
         }
     });
-
+    // Handles Reset Button Actions
     $("#reset-btn").click(function() {
         resetGame();
         drawTiles();
         $("#tilesleft").html("Tiles Left: " + moreTiles());
     });
-
+    // Handles New Button Actions
     $("#new-btn").click(function() {
         if (moreTiles() <= 7) {
             alert("You finished the game with a total score of " + totalScore);
