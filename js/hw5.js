@@ -10,6 +10,7 @@ $(document).ready(function() {
     
     var totalScore = 0;
 
+    // Reference: https://jesseheines.com/~heines/91.461/91.461-2015-16f/461-assn/Scrabble_Pieces_AssociativeArray_Jesse.js
     var ScrabbleTiles = [] ;
     ScrabbleTiles["A"] = { "value" : 1,  "od" : 9,  "nr" : 9, "timg" : "images/Scrabble_Tile_A.png" } ;
     ScrabbleTiles["B"] = { "value" : 3,  "od" : 2,  "nr" : 2, "timg" : "images/Scrabble_Tile_B.jpg" } ;
@@ -54,6 +55,7 @@ $(document).ready(function() {
     // Reference: https://jqueryui.com/droppable/
     $(".bTiles").droppable({
         drop: function(event,ui) {
+            // https://stackoverflow.com/questions/40571397/what-does-ui-draggable-draggable-means
             $(ui.draggable).addClass("onBoard");
             // // Testing: used to see what tile is dropped on a specific part of the board
             // console.log("Tile " + $(ui.draggable).attr('id') + " dropped on " + $(this).attr('id'));
@@ -80,6 +82,7 @@ $(document).ready(function() {
 
     // Generates random letter based off weighted tile disctribution
     function generateRandomLetter() {
+        // Reference: https://www.w3schools.com/jsref/jsref_random.asp
         rx = Math.floor((Math.random() * 100) + 1);
         if (rx > 0 && rx <= 9) { return "A"; } // od: 9
         else if (rx > 9 && rx <= 11) { return "B"; } // od: 2
@@ -138,6 +141,7 @@ $(document).ready(function() {
     // Determines if there still exists tiles to be dispensed
     function moreTiles() {
         var remainingTiles = 0;
+        // Reference: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
         let keys = Object.keys(ScrabbleTiles);
         for (let i = 0; i < Object.keys(ScrabbleTiles).length; ++i) {
             remainingTiles += ScrabbleTiles[keys[i]].nr;
@@ -170,6 +174,7 @@ $(document).ready(function() {
     }
     // Resets Game through by returning global variable and ui elements to their intial states
     function resetGame() {
+        // Reference: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
         let keys = Object.keys(ScrabbleTiles);
 
         // Removes any remaining tiles left on the board
